@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID from Firebase Auth" },
+        "email": { "type": "string", "description": "User email address" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "photoURL": { "type": "string", "description": "User avatar photo URL" },
+        "lastLogin": { "type": "string", "format": "date-time", "description": "Timestamp of last login" }
+      },
+      "required": ["uid", "email"]
+    },
+    "AlertSubscription": {
+      "title": "AlertSubscription",
+      "description": "User emergency mobile notification preferences",
+      "type": "object",
+      "properties": {
+        "phone": { "type": "string", "description": "User mobile phone number" },
+        "email": { "type": "string", "description": "Alert notification email" },
+        "smsEnabled": { "type": "boolean", "description": "Whether SMS broadcast is enabled" },
+        "emailEnabled": { "type": "boolean", "description": "Whether Email broadcast is enabled" },
+        "stationId": { "type": "string", "description": "Selected monitoring station ID" },
+        "thresholdAqi": { "type": "number", "description": "AQI threshold trigger" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["phone", "email", "smsEnabled", "emailEnabled", "thresholdAqi"]
+    },
+    "CommunityReport": {
+      "title": "CommunityReport",
+      "description": "Ground-level citizen smog and burning incidents",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string", "description": "Reporter Firebase Auth UID" },
+        "userName": { "type": "string", "description": "Reporter name" },
+        "userPhoto": { "type": "string", "description": "Reporter avatar URL" },
+        "location": { "type": "string", "description": "Ward or station name" },
+        "landmark": { "type": "string", "description": "Street or landmark description" },
+        "severity": { "type": "string", "description": "Incident category" },
+        "description": { "type": "string", "description": "Detailed observation description" },
+        "reportedAqiEstimate": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "userName", "location", "severity", "description"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account document"
+    },
+    "/users/{userId}/subscriptions/{subId}": {
+      "schema": "AlertSubscription",
+      "description": "User alert subscription settings"
+    },
+    "/community_reports/{reportId}": {
+      "schema": "CommunityReport",
+      "description": "Citizen incident observations"
+    }
+  }
+}

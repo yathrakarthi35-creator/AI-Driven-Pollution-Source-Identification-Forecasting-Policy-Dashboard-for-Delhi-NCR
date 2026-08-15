@@ -1,0 +1,6 @@
+{
+  "name": "Delhi-NCR Air Quality & Pollution Dashboard (SIHI035)",
+  "description": "Real-time second-by-second satellite pollution stream, Firebase Auth & Firestore citizen incident reporting, mobile SMS & email emergency alert dispatch engine, 24-72h rate predication, clean air commute planner, indoor CADR optimizer, schools & workplaces hub, stubble trajectory simulator, and multilingual audio bulletins with Gemini 3.1 Pro High-Thinking intelligence for Delhi-NCR",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
