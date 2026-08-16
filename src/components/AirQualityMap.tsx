@@ -12,9 +12,12 @@ import {
   ExternalLink,
   MapPin,
   Info,
+  Compass,
+  Key,
 } from 'lucide-react';
 import { MonitoringStation, FarmFireHotspot } from '../types';
 import { getAqiCategory } from '../lib/utils';
+import { GoogleAirQualityMap, hasGoogleMapsKey } from './GoogleAirQualityMap';
 
 interface AirQualityMapProps {
   stations: MonitoringStation[];
@@ -33,6 +36,113 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
   onOpenStationDetail,
   fullHeight = false,
 }) => {
+  const [mapEngine, setMapEngine] = useState<'google' | 'geospatial'>(
+    hasGoogleMapsKey ? 'google' : 'google'
+  );
+  const [showKeySetupModal, setShowKeySetupModal] = useState(false);
+
+  // If user selected google and hasValidKey is true, render the GoogleAirQualityMap component
+  if (mapEngine === 'google' && hasGoogleMapsKey) {
+    return (
+      <div className="relative">
+        <GoogleAirQualityMap
+          stations={stations}
+          selectedStation={selectedStation}
+          onSelectStation={onSelectStation}
+          farmFires={farmFires}
+          onOpenStationDetail={onOpenStationDetail}
+          fullHeight={fullHeight}
+        />
+        {/* Switch Engine Tab on Bottom Right */}
+        <div className="absolute bottom-3 right-4 z-30 flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-2.5 py-1 border border-white/20 text-[9px] font-mono text-white">
+          <span className="text-emerald-400 font-bold">● Google Maps Active</span>
+          <button
+            onClick={() => setMapEngine('geospatial')}
+            className="text-white/60 hover:text-white underline ml-1"
+          >
+            Switch to Radar View
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If user selected google but has no API key yet, show the Google Maps setup card + interactive toggle
+  if (mapEngine === 'google' && !hasGoogleMapsKey) {
+    return (
+      <div
+        className={`relative bg-[#070d19] border border-white/15 overflow-hidden flex flex-col items-center justify-center p-6 text-center ${
+          fullHeight ? 'h-[750px]' : 'h-[480px] sm:h-[520px]'
+        }`}
+      >
+        <div className="max-w-lg bg-black/90 border border-white/20 p-6 shadow-2xl space-y-4">
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-cyan-600/20 border border-cyan-400 flex items-center justify-center">
+              <Compass className="w-5 h-5 text-cyan-400" />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-base font-black uppercase text-white tracking-wider">
+              GOOGLE MAPS™ PLATFORM INTEGRATION
+            </h3>
+            <p className="text-xs text-white/70 mt-1">
+              Connect Google Maps to visualize real-time CAAQMS pollution readings, live wind velocity vectors, and NASA VIIRS farm fire hotspots on official Google Satellite & Terrain tiles.
+            </p>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 p-3 text-left text-xs text-white/80 space-y-1.5 font-mono">
+            <div className="font-bold text-cyan-300 text-[11px]">QUICK API KEY ACTIVATION:</div>
+            <div>1. Open <strong className="text-white">Settings</strong> (⚙️ top right corner) → <strong className="text-white">Secrets</strong></div>
+            <div>2. Add secret name: <code className="bg-cyan-950 text-cyan-300 px-1 py-0.5 border border-cyan-500/40">GOOGLE_MAPS_PLATFORM_KEY</code></div>
+            <div>3. Paste your Google Maps API key & press Enter</div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <a
+              href="https://console.cloud.google.com/google/maps-apis/start?utm_campaign=gmp-code-assist-ais"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+            >
+              <span>GET GOOGLE MAPS KEY</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <button
+              onClick={() => setMapEngine('geospatial')}
+              className="w-full sm:w-auto px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-black uppercase tracking-wider transition-all border border-white/20 flex items-center justify-center gap-1.5"
+            >
+              <Wind className="w-3.5 h-3.5 text-teal-400" />
+              <span>VIEW RADAR AIRSHED MODE</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback / Radar Geospatial View with Wind & Pollution Vectors
+  return <GeospatialCanvasMap
+    stations={stations}
+    selectedStation={selectedStation}
+    onSelectStation={onSelectStation}
+    farmFires={farmFires}
+    onOpenStationDetail={onOpenStationDetail}
+    fullHeight={fullHeight}
+    onSwitchToGoogle={() => setMapEngine('google')}
+  />;
+};
+
+// Internal Subcomponent for Canvas/Vector Map
+const GeospatialCanvasMap: React.FC<AirQualityMapProps & { onSwitchToGoogle: () => void }> = ({
+  stations,
+  selectedStation,
+  onSelectStation,
+  farmFires,
+  onOpenStationDetail,
+  fullHeight,
+  onSwitchToGoogle,
+}) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -42,7 +152,6 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
   // Layer toggles
   const [showStations, setShowStations] = useState(true);
   const [showHeatmap, setShowHeatmap] = useState(true);
-  const [showHotspots, setShowHotspots] = useState(true);
   const [showFarmFires, setShowFarmFires] = useState(true);
   const [showWindVectors, setShowWindVectors] = useState(true);
 
@@ -95,6 +204,13 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
         <h3 className="text-xs font-black uppercase tracking-[0.25em] text-white">
           GEOSPATIAL AIRSHED TELEMETRY / DELHI-NCR
         </h3>
+        <button
+          onClick={onSwitchToGoogle}
+          className="ml-2 px-2 py-0.5 bg-cyan-600 hover:bg-cyan-500 text-white text-[9px] font-black uppercase tracking-wider flex items-center gap-1 transition-colors"
+        >
+          <Compass className="w-2.5 h-2.5" />
+          <span>USE GOOGLE MAPS</span>
+        </button>
       </div>
 
       {/* Map Control Buttons */}
@@ -203,7 +319,7 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
         </label>
       </div>
 
-      {/* Selected Station Inspector matching Bold Typography */}
+      {/* Selected Station Inspector */}
       {selectedStation && (
         <div className="absolute top-12 right-4 z-20 w-56 sm:w-64 bg-[#0a0a0a] p-4 border border-white/20 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
           <div className="flex items-center justify-between pb-2 border-b border-white/10">
@@ -277,7 +393,6 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
             }px)`,
           }}
         >
-          {/* Radial & Linear Gradients */}
           <defs>
             <radialGradient id="delhi-heat-core" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#ef4444" stopOpacity="0.5" />
@@ -285,105 +400,42 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
               <stop offset="70%" stopColor="#eab308" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
             </radialGradient>
-
-            <radialGradient id="east-delhi-hotspot" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#dc2626" stopOpacity="0.6" />
-              <stop offset="60%" stopColor="#ef4444" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
-            </radialGradient>
-
-            <radialGradient id="fire-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ff5722" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#ff5722" stopOpacity="0" />
-            </radialGradient>
           </defs>
 
-          {/* Delhi NCR Arterial Road & River Grid */}
-          <g stroke="#ffffff" strokeWidth="1" opacity="0.08">
-            <circle cx="430" cy="270" r="110" fill="none" strokeWidth="1.5" />
-            <circle cx="430" cy="270" r="170" fill="none" strokeWidth="1.5" strokeDasharray="6 3" />
-            <path
-              d="M 440 20 Q 470 120, 460 210 T 490 340 T 520 490"
-              fill="none"
-              stroke="#38bdf8"
-              strokeWidth="4"
-              opacity="0.5"
-            />
-            <line x1="430" y1="20" x2="430" y2="270" strokeWidth="1.5" />
-            <line x1="430" y1="270" x2="680" y2="230" strokeWidth="1.5" />
-            <line x1="430" y1="270" x2="310" y2="450" strokeWidth="1.5" />
-            <line x1="430" y1="270" x2="520" y2="490" strokeWidth="1.5" />
-            <line x1="430" y1="270" x2="210" y2="270" strokeWidth="1.5" />
+          {/* Grid lines */}
+          <g opacity="0.12" stroke="#ffffff" strokeWidth="0.5" strokeDasharray="3 3">
+            {[100, 200, 300, 400, 500, 600, 700].map((x) => (
+              <line key={`vx-${x}`} x1={x} y1="0" x2={x} y2="520" />
+            ))}
+            {[80, 160, 240, 320, 400, 480].map((y) => (
+              <line key={`hy-${y}`} x1="0" y1={y} x2="800" y2={y} />
+            ))}
           </g>
 
-          {/* Delhi NCT Administrative Boundary */}
-          <polygon
-            points="340,140 460,110 500,180 520,320 480,410 390,400 320,330 310,210"
-            fill="#ffffff"
-            fillOpacity="0.02"
-            stroke="#ffffff"
-            strokeWidth="1.5"
-            strokeDasharray="4 2"
-            opacity="0.3"
-          />
-
-          {/* AQI Heatmap Layer */}
+          {/* Heatmap Layer */}
           {showHeatmap && (
             <g>
-              <circle cx="440" cy="260" r="180" fill="url(#delhi-heat-core)" />
-              <circle cx="530" cy="220" r="110" fill="url(#east-delhi-hotspot)" />
-              <circle cx="435" cy="150" r="95" fill="url(#east-delhi-hotspot)" />
+              <ellipse cx="400" cy="270" rx="280" ry="180" fill="url(#delhi-heat-core)" />
             </g>
           )}
 
           {/* Wind Trajectory Vectors */}
           {showWindVectors && (
-            <g opacity="0.7">
-              <path
-                d="M 120 40 Q 280 150, 440 260 T 640 380"
-                fill="none"
-                stroke="#14b8a6"
-                strokeWidth="2"
-                className="animate-wind"
-              />
-              <path
-                d="M 180 10 Q 320 120, 480 230 T 680 340"
-                fill="none"
-                stroke="#14b8a6"
-                strokeWidth="2"
-                className="animate-wind"
-              />
-              <path
-                d="M 80 80 Q 240 180, 410 290 T 580 430"
-                fill="none"
-                stroke="#14b8a6"
-                strokeWidth="2"
-                className="animate-wind"
-              />
-              <polygon points="440,260 425,255 428,260 425,265" fill="#14b8a6" />
-              <polygon points="530,220 515,215 518,220 515,225" fill="#14b8a6" />
-              <polygon points="640,380 625,375 628,380 625,385" fill="#14b8a6" />
+            <g opacity="0.45" stroke="#2dd4bf" strokeWidth="1.2" strokeDasharray="4 2">
+              <path d="M 120 80 Q 250 160 400 240 T 680 380" fill="none" />
+              <path d="M 150 40 Q 290 120 440 210 T 720 350" fill="none" />
+              <path d="M 90 130 Q 220 210 370 290 T 640 430" fill="none" />
             </g>
           )}
 
-          {/* Farm Fires */}
+          {/* Farm Fire Hotspots */}
           {showFarmFires &&
             farmFires.map((fire) => {
-              const fireX = 80 + ((fire.lng - 74.8) / 2.8) * 260;
-              const fireY = 30 + ((31.8 - fire.lat) / 3.0) * 220;
-
+              const { x, y } = projectCoord(fire.lat, fire.lng);
               return (
-                <g key={fire.id} className="cursor-pointer group">
-                  <circle cx={fireX} cy={fireY} r="16" fill="url(#fire-glow)" />
-                  <rect
-                    x={fireX - 4}
-                    y={fireY - 4}
-                    width="8"
-                    height="8"
-                    fill="#f97316"
-                    className="animate-pulse"
-                  />
-                  <title>{`NASA Active Fire: ${fire.district}, ${fire.state} | FRP: ${fire.frp} MW (${fire.satellite})`}</title>
+                <g key={fire.id} transform={`translate(${x}, ${y})`} className="cursor-pointer">
+                  <circle r="12" fill="#ff5722" opacity="0.3" className="animate-ping" />
+                  <circle r="6" fill="#f97316" stroke="#fff" strokeWidth="1" />
                 </g>
               );
             })}
@@ -393,78 +445,35 @@ export const AirQualityMap: React.FC<AirQualityMapProps> = ({
             stations.map((st) => {
               const { x, y } = projectCoord(st.lat, st.lng);
               const isSelected = selectedStation?.id === st.id;
-              const aqiInfo = getAqiCategory(st.aqi);
-
+              const aqiColor = st.aqi > 400 ? '#9333ea' : st.aqi > 300 ? '#dc2626' : '#ea580c';
               return (
                 <g
                   key={st.id}
+                  transform={`translate(${x}, ${y})`}
+                  className="cursor-pointer group"
                   onClick={() => onSelectStation(st)}
-                  className="cursor-pointer transition-transform duration-150 hover:scale-110"
                 >
-                  {/* Selection Ring */}
-                  {isSelected && (
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r="18"
-                      fill="none"
-                      stroke="#ffffff"
-                      strokeWidth="2"
-                    />
-                  )}
-
-                  {/* Main Station Square or Circle */}
-                  <rect
-                    x={x - 12}
-                    y={y - 12}
-                    width="24"
-                    height="24"
-                    fill={aqiInfo.color}
-                    stroke="#000000"
-                    strokeWidth="2"
+                  <circle
+                    r={isSelected ? '14' : '9'}
+                    fill={aqiColor}
+                    stroke="#ffffff"
+                    strokeWidth={isSelected ? '2.5' : '1.5'}
+                    opacity="0.95"
                   />
-
-                  {/* Station AQI value */}
                   <text
-                    x={x}
-                    y={y + 4}
+                    y="-12"
                     textAnchor="middle"
-                    fontSize="10"
-                    fontWeight="900"
                     fill="#ffffff"
-                    fontFamily="Space Grotesk, monospace"
+                    fontSize="9"
+                    fontWeight="bold"
+                    className="font-mono tracking-tight"
                   >
-                    {st.aqi}
-                  </text>
-
-                  {/* Station Name Label */}
-                  <text
-                    x={x}
-                    y={y + 24}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fontWeight="900"
-                    letterSpacing="0.05em"
-                    fill={isSelected ? '#ffffff' : 'rgba(255,255,255,0.7)'}
-                    fontFamily="Space Grotesk, sans-serif"
-                  >
-                    {st.name.toUpperCase()}
+                    {st.name} ({st.aqi})
                   </text>
                 </g>
               );
             })}
         </svg>
-      </div>
-
-      {/* Map Footer Bar */}
-      <div className="bg-[#050505] border-t border-white/10 px-4 py-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] opacity-60">
-        <div className="flex items-center gap-2 text-white">
-          <MapPin className="w-3 h-3 text-red-500" />
-          <span>DELHI-NCR AIRSHED (28.6139° N, 77.2090° E)</span>
-        </div>
-        <div className="text-white">
-          <span>SCALE: {(zoomLevel * 100).toFixed(0)}%</span>
-        </div>
       </div>
     </div>
   );
