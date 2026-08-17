@@ -28,7 +28,7 @@
   letter-spacing: -0.04em;
 }
 
-/* Custom terminal scrollbars */
+/* Custom application scrollbars */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

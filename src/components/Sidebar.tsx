@@ -85,10 +85,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <div>
             <h2 className="text-xs font-black tracking-[0.25em] uppercase opacity-50">
-              TERMINAL ID
+              AIRSHED NODE
             </h2>
             <p className="text-lg font-black tracking-tight text-white">
-              SIHI035 / INTEL
+              DELHI-NCR / CAAQMS
             </p>
           </div>
         </div>

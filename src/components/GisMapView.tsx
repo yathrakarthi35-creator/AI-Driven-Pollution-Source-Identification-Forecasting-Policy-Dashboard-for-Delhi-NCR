@@ -80,9 +80,12 @@ export const GisMapView: React.FC<GisMapViewProps> = ({
             className="bg-slate-900 border border-slate-700 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none"
           >
             <option value="all">All AQI Levels</option>
+            <option value="severe">Severe (401+)</option>
             <option value="very poor">Very Poor (301-400)</option>
             <option value="poor">Poor (201-300)</option>
             <option value="moderate">Moderate (101-200)</option>
+            <option value="satisfactory">Satisfactory (51-100)</option>
+            <option value="good">Good (0-50)</option>
           </select>
 
           {/* State Filter */}

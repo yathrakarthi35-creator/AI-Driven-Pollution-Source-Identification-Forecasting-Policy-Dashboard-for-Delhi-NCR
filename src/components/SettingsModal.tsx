@@ -67,7 +67,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             <input
               type="text"
               disabled
-              value="Proprietary Atmospheric Reasoning Neural Engine (SIHI035)"
+              value="Proprietary Atmospheric Reasoning Neural Engine"
               className="w-full bg-slate-900/60 border border-slate-800 rounded-lg p-2 text-slate-300 font-mono text-[11px]"
             />
           </div>

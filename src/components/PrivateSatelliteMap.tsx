@@ -174,11 +174,29 @@ export const PrivateSatelliteMap: React.FC<PrivateSatelliteMapProps> = ({
       });
     });
 
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
+
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
     };
   }, []);
+
+  // Invalidate map size on height/fullscreen toggle
+  useEffect(() => {
+    if (mapInstanceRef.current) {
+      const timer = setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [fullHeight, isFullscreen]);
 
   // Update Tile Layer when provider changes
   useEffect(() => {
@@ -720,8 +738,8 @@ export const PrivateSatelliteMap: React.FC<PrivateSatelliteMapProps> = ({
           </div>
           <div className="mt-2 space-y-1.5 text-xs text-white/80 font-mono">
             <p className="font-bold text-white text-sm">{activeFire.district}, {activeFire.state}</p>
-            <p className="text-orange-300">FRP: <span className="font-bold">{activeFire.frpMw} MW</span></p>
-            <p className="text-white/60">Capture: {activeFire.acqTime}</p>
+            <p className="text-orange-300">FRP: <span className="font-bold">{activeFire.frp} MW</span></p>
+            <p className="text-white/60">Capture: {activeFire.detectedAt}</p>
             <p className="text-[10px] text-red-400 font-bold pt-1 border-t border-white/10">
               Plume Trajectory: Infiltration into Delhi Airshed
             </p>

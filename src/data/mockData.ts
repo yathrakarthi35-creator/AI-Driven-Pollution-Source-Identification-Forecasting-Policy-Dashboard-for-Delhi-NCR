@@ -723,7 +723,7 @@ export const CHEMICAL_TRACERS: ChemicalTracer[] = [
 export const INITIAL_REPORTS: AirReport[] = [
   {
     id: 'rep-001',
-    title: 'Daily Airshed Intelligence & GRAP Stage III Compliance Directive',
+    title: 'Daily Airshed Advisory & GRAP Stage III Compliance Directive',
     type: 'Executive Briefing',
     generatedAt: '14 May 2025, 10:30 AM',
     summary: 'Delhi NCR aggregate AQI stands at 350 (Very Poor). Anand Vihar (350), Jahangirpuri (380), and Ghaziabad (365) remain primary critical hotspots under calm boundary layer inversion.',

@@ -148,29 +148,37 @@ export const submitCommunityReport = async (
 };
 
 export const subscribeCommunityReports = (
-  callback: (reports: CommunitySmogReport[]) => void
+  callback: (reports: CommunitySmogReport[]) => void,
+  onError?: (error: any) => void
 ) => {
   const reportsCol = collection(db, 'community_reports');
   const q = query(reportsCol, orderBy('timestamp', 'desc'), limit(25));
-  return onSnapshot(q, (snapshot) => {
-    const list: CommunitySmogReport[] = [];
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      list.push({
-        id: docSnap.id,
-        userId: data.userId || '',
-        userName: data.userName || 'Citizen Reporter',
-        userPhoto: data.userPhoto || '',
-        location: data.location || 'Delhi-NCR',
-        landmark: data.landmark || '',
-        severity: data.severity || 'Visible Smog Plume',
-        description: data.description || '',
-        reportedAqiEstimate: data.reportedAqiEstimate,
-        timestamp: data.timestamp ? data.timestamp.toDate() : new Date(),
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const list: CommunitySmogReport[] = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        list.push({
+          id: docSnap.id,
+          userId: data.userId || '',
+          userName: data.userName || 'Citizen Reporter',
+          userPhoto: data.userPhoto || '',
+          location: data.location || 'Delhi-NCR',
+          landmark: data.landmark || '',
+          severity: data.severity || 'Visible Smog Plume',
+          description: data.description || '',
+          reportedAqiEstimate: data.reportedAqiEstimate,
+          timestamp: data.timestamp && typeof data.timestamp.toDate === 'function' ? data.timestamp.toDate() : new Date(),
+        });
       });
-    });
-    callback(list);
-  });
+      callback(list);
+    },
+    (error) => {
+      console.warn('Firestore community reports subscription notice:', error);
+      if (onError) onError(error);
+    }
+  );
 };
 
 // 4. User Saved Commute Routes

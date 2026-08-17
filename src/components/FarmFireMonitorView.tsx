@@ -145,7 +145,7 @@ export const FarmFireMonitorView: React.FC<FarmFireMonitorViewProps> = ({ farmFi
                     {fire.frp} MW
                   </td>
                   <td className="py-2.5 px-3 text-amber-300">
-                    {fire.brightnessTemp} K
+                    {fire.brightness} K
                   </td>
                   <td className="py-2.5 px-3">
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -156,7 +156,7 @@ export const FarmFireMonitorView: React.FC<FarmFireMonitorViewProps> = ({ farmFi
                     {fire.satellite}
                   </td>
                   <td className="py-2.5 px-3 text-slate-400">
-                    {fire.time}
+                    {fire.detectedAt}
                   </td>
                 </tr>
               ))}

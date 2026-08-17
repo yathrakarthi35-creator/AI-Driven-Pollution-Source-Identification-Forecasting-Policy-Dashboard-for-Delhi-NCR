@@ -36,7 +36,7 @@ async function startServer() {
     res.json({
       status: "ok",
       timestamp: new Date().toISOString(),
-      engine: "Proprietary Delhi-NCR Air Quality Intelligence System (SIHI035)",
+      engine: "Delhi-NCR Air Quality Decision Support System",
       mode: "STANDALONE_SELF_CONTAINED",
     });
   });
@@ -572,7 +572,7 @@ The National Capital Region continues under severe atmospheric stagnation. City-
       const ai = getGeminiClient();
 
       if (!ai) {
-        const reply = `I am the **Delhi-NCR Air Quality & Environmental Intelligence Advisor**. Regarding your inquiry on: *"${message}"*:
+        const reply = `I am the **Delhi-NCR Air Quality & Environmental Advisor**. Regarding your inquiry on: *"${message}"*:
 
 In Delhi-NCR during autumn/winter meteorology, the primary particulate contributors are **vehicular emissions (38–42%)**, **transboundary agricultural biomass burning (20–28%)**, and **road/construction dust (12–16%)**. 
 
@@ -613,7 +613,7 @@ Under **GRAP Stage III/IV**:
       if (!ai) {
         const inhaledMass = Math.round(dist * (mode.includes("Metro") ? 1.2 : mode.includes("Car") ? 1.8 : 4.6));
 
-        const analysis = `### 🧭 Clean Air Commute Intelligence & Particulate Dosage Model
+        const analysis = `### 🧭 Clean Air Commute & Particulate Dosage Model
 **Route:** ${orig} $\\rightarrow$ ${dest} (${dist} km) | **Departure:** ${time}
 **Transit Mode:** ${mode} | **Ambient Air Quality:** ${aqi} AQI
 

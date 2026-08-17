@@ -135,9 +135,9 @@ export const EmergencyMobileAlertsView: React.FC<EmergencyMobileAlertsViewProps>
               ...prev,
               phoneNumber: firestorePrefs.phone || prev.phoneNumber,
               emailAddress: firestorePrefs.email || prev.emailAddress,
-              smsAlertsEnabled: firestorePrefs.smsEnabled !== undefined ? firestorePrefs.smsEnabled : prev.smsAlertsEnabled,
-              emailAlertsEnabled: firestorePrefs.emailEnabled !== undefined ? firestorePrefs.emailEnabled : prev.emailAlertsEnabled,
-              preferredStationId: firestorePrefs.stationId || prev.preferredStationId,
+              enableSms: firestorePrefs.smsEnabled !== undefined ? firestorePrefs.smsEnabled : prev.enableSms,
+              enableEmail: firestorePrefs.emailEnabled !== undefined ? firestorePrefs.emailEnabled : prev.enableEmail,
+              selectedStationIds: firestorePrefs.stationId ? [firestorePrefs.stationId] : prev.selectedStationIds,
               aqiThreshold: firestorePrefs.thresholdAqi || prev.aqiThreshold,
             }));
           }

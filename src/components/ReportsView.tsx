@@ -164,7 +164,7 @@ The National Capital Region of Delhi is currently situated beneath a strong noct
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black tracking-[0.3em] uppercase opacity-50 text-white">
-              STATUTORY INTELLIGENCE & POLICY SYNTHESIS
+              STATUTORY ADVISORY & POLICY SYNTHESIS
             </span>
             <span className="px-1.5 py-0.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[9px] font-black uppercase">
               GEMINI 3.1 PRO HIGH THINKING
@@ -175,7 +175,7 @@ The National Capital Region of Delhi is currently situated beneath a strong noct
             CAQM EXECUTIVE ENVIRONMENTAL REPORTS
           </h1>
           <p className="text-xs text-white/70 max-w-2xl mt-0.5">
-            Automated statutory intelligence synthesis, multi-agency compliance documentation, and meteorological source attribution briefings for Delhi-NCR.
+            Automated statutory advisory synthesis, multi-agency compliance documentation, and meteorological source attribution briefings for Delhi-NCR.
           </p>
         </div>
 

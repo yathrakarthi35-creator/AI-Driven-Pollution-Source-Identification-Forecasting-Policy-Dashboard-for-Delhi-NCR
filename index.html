@@ -3,13 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Delhi-NCR Pollution Intel AI — Environmental Decision Dashboard</title>
-    <meta name="description" content="AI-driven pollution source identification, forecasting, and policy dashboard for Delhi-NCR." />
+    <title>Delhi-NCR Air Quality Dashboard — Environmental Decision Platform</title>
+    <meta name="description" content="Real-time air quality source identification, forecasting, and policy dashboard for Delhi-NCR." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <meta property="og:title" content="Delhi-NCR Pollution Intel AI" />
+    <script>
+      (function() {
+        try {
+          var nativeFetch = window.fetch;
+          var activeFetch = nativeFetch ? nativeFetch.bind(window) : undefined;
+          
+          try {
+            Object.defineProperty(window, 'fetch', {
+              get: function() {
+                return activeFetch;
+              },
+              set: function(fn) {
+                activeFetch = fn;
+              },
+              configurable: true,
+              enumerable: true
+            });
+          } catch (e1) {
+            try {
+              if (window.Window && window.Window.prototype) {
+                Object.defineProperty(window.Window.prototype, 'fetch', {
+                  get: function() {
+                    return activeFetch;
+                  },
+                  set: function(fn) {
+                    activeFetch = fn;
+                  },
+                  configurable: true,
+                  enumerable: true
+                });
+              }
+            } catch (e2) {}
+          }
+        } catch (err) {}
+
+        // Gracefully handle benign Vite HMR WebSocket connection notices in sandboxed container preview
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event && event.reason) {
+            var msg = String(event.reason.message || event.reason || '');
+            if (msg.indexOf('WebSocket') !== -1 || msg.indexOf('websocket') !== -1) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+            }
+          }
+        });
+      })();
+    </script>
+    <meta property="og:title" content="Delhi-NCR Air Quality Dashboard" />
     <meta property="og:description" content="AI-driven pollution source identification, forecasting, and policy dashboard for Delhi-NCR." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />

@@ -89,14 +89,14 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-30 bg-[#0a0a0a] border-b border-white/10 px-4 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-baseline justify-between gap-3">
-      {/* Left: Terminal Brand & Station Selector */}
+      {/* Left: Brand & Station Selector */}
       <div className="flex flex-wrap items-baseline gap-4">
         <div className="flex flex-col">
           <h1 className="text-[10px] sm:text-xs font-black tracking-[0.3em] uppercase opacity-50 text-white">
-            System Terminal / Delhi-NCR
+            Airshed Command / Delhi-NCR
           </h1>
           <p className="text-xl sm:text-2xl font-black tracking-tighter text-white">
-            POLLUTION INTEL AI <span className="text-red-500">V2.4</span>
+            DELHI-NCR AIR QUALITY <span className="text-red-500">V2.4</span>
           </p>
         </div>
 
@@ -144,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Brain className="w-4 h-4 text-white animate-pulse" />
           <span className="hidden sm:inline">AI Reasoning (High Thinking)</span>
-          <span className="sm:hidden">AI Intel</span>
+          <span className="sm:hidden">AI Reasoning</span>
         </button>
 
         {/* Mobile SMS & Email Alerts Button */}
