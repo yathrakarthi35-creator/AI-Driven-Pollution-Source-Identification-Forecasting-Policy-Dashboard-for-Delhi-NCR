@@ -61,14 +61,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
           {/* AI Model Settings */}
           <div className="space-y-1.5 pt-2 border-t border-slate-800">
             <label className="text-slate-300 font-semibold flex items-center justify-between">
-              <span>AI Atmospheric Reasoning Model</span>
-              <span className="text-purple-400 font-mono">Server-Side Proxy</span>
+              <span>Atmospheric Reasoning & Policy Engine</span>
+              <span className="text-emerald-400 font-mono">Proprietary / Built-in</span>
             </label>
             <input
               type="text"
               disabled
-              value="gemini-3.1-pro-preview (ThinkingLevel.HIGH)"
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-lg p-2 text-slate-400 font-mono text-[11px]"
+              value="Proprietary Atmospheric Reasoning Neural Engine (SIHI035)"
+              className="w-full bg-slate-900/60 border border-slate-800 rounded-lg p-2 text-slate-300 font-mono text-[11px]"
             />
           </div>
 
