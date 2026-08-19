@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # 1. TimescaleDB & PostGIS Spatial Relational Warehouse
+  timescaledb:
+    image: timescale/timescaledb-ha:pg15-ts2.11-latest
+    container_name: delhi_spatial_db
+    environment:
+      - POSTGRES_DB=delhi_pollution
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=core_secure_pass_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  # 2. NVY AI Deep Learning & FastAPI Gateway
+  backend:
+    build: ./backend
+    container_name: nvy_fastapi_ml_engine
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:core_secure_pass_2026@timescaledb:5432/delhi_pollution
+      - NASA_FIRMS_API_KEY=${NASA_FIRMS_API_KEY:-}
+    depends_on:
+      - timescaledb
+    restart: always
+
+  # 3. React / Vite Frontend Mission Control
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: nvy_pollution_dashboard_ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  pgdata:

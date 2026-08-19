@@ -1,6 +1,6 @@
 {
-  "name": "Delhi-NCR Air Quality & Pollution Dashboard",
-  "description": "Real-time second-by-second satellite pollution stream, Firebase Auth & Firestore citizen incident reporting, mobile SMS & email emergency alert dispatch engine, 24-72h rate predication, clean air commute planner, indoor CADR optimizer, schools & workplaces hub, stubble trajectory simulator, and multilingual audio bulletins for Delhi-NCR",
+  "name": "Delhi-NCR Air Quality & Pollution Dashboard (NVY AI Engine)",
+  "description": "Real-time second-by-second satellite pollution stream, Firebase Auth & Firestore citizen incident reporting, mobile SMS & email emergency alert dispatch engine, 24-72h rate prediction, clean air commute planner, indoor CADR optimizer, schools & workplaces hub, stubble trajectory simulator, and multilingual audio bulletins for Delhi-NCR powered by NVY in-house deterministic AI engine.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }
